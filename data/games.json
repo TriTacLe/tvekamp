@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1",
+    "name": "Stein, Saks, Papir",
+    "rules": "Best av 3 runder. Spillerne viser tegn samtidig. Stein slår saks, saks slår papir, papir slår stein.",
+    "time": 2,
+    "players": 2,
+    "visible": true
+  },
+  {
+    "id": "2",
+    "name": "Armbryting",
+    "rules": "Klassisk armbryting! Albuen må holdes på bordet. Første som presser motstanderens hånd ned vinner.",
+    "time": 1,
+    "players": 2,
+    "visible": true
+  },
+  {
+    "id": "3",
+    "name": "Trivia Quiz",
+    "rules": "5 spørsmål om teknologi. Raskeste riktige svar gir poeng. Mest poeng vinner!",
+    "time": 5,
+    "players": 2,
+    "visible": true
+  },
+  {
+    "id": "15f34e83-1bcc-47e4-8bec-371e6a469d3f",
+    "name": "Test",
+    "rules": "test",
+    "time": 5,
+    "players": 2,
+    "visible": true,
+    "createdAt": "2026-01-27T18:35:51.053Z"
+  }
+]
