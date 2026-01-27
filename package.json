@@ -1,7 +1,7 @@
 {
   "name": "tvekamp",
   "version": "1.0.0",
-  "description": "Web vs DevOps Competition Manager",
+  "description": "Tvekamp Web vs DevOps",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
