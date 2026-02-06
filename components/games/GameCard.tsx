@@ -2,9 +2,23 @@
 
 import type { Game } from '@/lib/types';
 
-export default function GameCard({ game }: { game: Game }) {
+interface GameCardProps {
+  game: Game;
+  onDelete?: (id: string) => void;
+}
+
+export default function GameCard({ game, onDelete }: GameCardProps) {
   return (
-    <div className="glass rounded-xl p-5 hover:bg-white/5 transition-all duration-300">
+    <div className="glass rounded-xl p-5 hover:bg-white/5 transition-all duration-300 relative group">
+      {onDelete && (
+        <button
+          onClick={() => onDelete(game.id)}
+          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/30 hover:text-red-300 transition-all opacity-0 group-hover:opacity-100 flex items-center justify-center text-sm cursor-pointer"
+          title="Fjern spill"
+        >
+          &times;
+        </button>
+      )}
       <div className="flex items-start justify-between mb-2">
         <h3 className="font-display text-lg text-white">{game.name}</h3>
         <span className="text-xs text-white/30 bg-white/5 rounded-full px-2 py-0.5">

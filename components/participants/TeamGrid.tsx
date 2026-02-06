@@ -9,9 +9,10 @@ interface TeamGridProps {
   devopsPlayers: Participant[];
   webWins: number;
   devopsWins: number;
+  onDelete?: (id: string) => void;
 }
 
-export default function TeamGrid({ webPlayers, devopsPlayers, webWins, devopsWins }: TeamGridProps) {
+export default function TeamGrid({ webPlayers, devopsPlayers, webWins, devopsWins, onDelete }: TeamGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
       {/* Web Team */}
@@ -19,10 +20,10 @@ export default function TeamGrid({ webPlayers, devopsPlayers, webWins, devopsWin
         <TeamStats team="web" count={webPlayers.length} wins={webWins} />
         <div className="space-y-3">
           {webPlayers.map((p) => (
-            <ParticipantCard key={p.id} participant={p} />
+            <ParticipantCard key={p.id} participant={p} onDelete={onDelete} />
           ))}
           {webPlayers.length === 0 && (
-            <p className="text-white/30 text-sm text-center py-8">Ingen deltakere ennå</p>
+            <p className="text-white/30 text-sm text-center py-8">Ingen deltakere enna</p>
           )}
         </div>
       </div>
@@ -32,10 +33,10 @@ export default function TeamGrid({ webPlayers, devopsPlayers, webWins, devopsWin
         <TeamStats team="devops" count={devopsPlayers.length} wins={devopsWins} />
         <div className="space-y-3">
           {devopsPlayers.map((p) => (
-            <ParticipantCard key={p.id} participant={p} />
+            <ParticipantCard key={p.id} participant={p} onDelete={onDelete} />
           ))}
           {devopsPlayers.length === 0 && (
-            <p className="text-white/30 text-sm text-center py-8">Ingen deltakere ennå</p>
+            <p className="text-white/30 text-sm text-center py-8">Ingen deltakere enna</p>
           )}
         </div>
       </div>
