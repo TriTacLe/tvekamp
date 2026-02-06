@@ -2,25 +2,39 @@
 
 import type { Participant } from '@/lib/types';
 
-export default function ParticipantCard({ participant }: { participant: Participant }) {
+interface ParticipantCardProps {
+  participant: Participant;
+  onDelete?: (id: string) => void;
+}
+
+export default function ParticipantCard({ participant, onDelete }: ParticipantCardProps) {
   const isWeb = participant.team === 'web';
   const borderColor = isWeb ? 'border-web-primary/30' : 'border-devops-primary/30';
   const glowColor = isWeb ? 'hover:shadow-web-primary/20' : 'hover:shadow-devops-primary/20';
 
   return (
     <div
-      className={`glass rounded-xl p-5 border ${borderColor} ${glowColor} hover:shadow-lg transition-all duration-300`}
+      className={`glass rounded-xl p-5 border ${borderColor} ${glowColor} hover:shadow-lg transition-all duration-300 relative group`}
     >
+      {onDelete && (
+        <button
+          onClick={() => onDelete(participant.id)}
+          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/30 hover:text-red-300 transition-all opacity-0 group-hover:opacity-100 flex items-center justify-center text-sm cursor-pointer"
+          title="Fjern deltaker"
+        >
+          &times;
+        </button>
+      )}
       <div className="flex flex-col items-center text-center gap-3">
         {participant.imageUrl ? (
           <img
             src={participant.imageUrl}
             alt={participant.name}
-            className="w-28 h-28 rounded-full object-cover border-3 border-white/10 shadow-lg"
+            className="w-36 h-36 rounded-full object-cover border-4 border-white/10 shadow-lg"
           />
         ) : (
           <div
-            className={`w-28 h-28 rounded-full flex items-center justify-center text-3xl font-bold ${
+            className={`w-36 h-36 rounded-full flex items-center justify-center text-4xl font-bold ${
               isWeb ? 'web-gradient' : 'devops-gradient'
             }`}
           >
