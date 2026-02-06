@@ -7,5 +7,77 @@
     "superpower": "1",
     "imageUrl": "/uploads/8c7626b5-3741-4e9a-ae52-6d41fb3b401c.jpeg",
     "createdAt": "2026-01-27T18:48:36.609Z"
+  },
+  {
+    "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
+    "name": "Emma",
+    "team": "web",
+    "funFact": "Kan alle CSS-selektorer utenat",
+    "superpower": "Pixel-perfekt design",
+    "createdAt": "2026-02-01T10:00:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-1111-4aaa-bbbb-000000000002",
+    "name": "Oliver",
+    "team": "web",
+    "funFact": "Har bygd 50+ React-apper",
+    "superpower": "Komponent-arkitekt",
+    "createdAt": "2026-02-01T10:01:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-1111-4aaa-bbbb-000000000003",
+    "name": "Nora",
+    "team": "web",
+    "funFact": "Elsker TypeScript mer enn kaffe",
+    "superpower": "Type-sikkerhet",
+    "createdAt": "2026-02-01T10:02:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-1111-4aaa-bbbb-000000000004",
+    "name": "Henrik",
+    "team": "web",
+    "funFact": "Debugger alltid med console.table",
+    "superpower": "Frontend-magi",
+    "createdAt": "2026-02-01T10:03:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-1111-4aaa-bbbb-000000000005",
+    "name": "Sofia",
+    "team": "web",
+    "funFact": "Foretrekker Tailwind over alt",
+    "superpower": "Utility-first ninja",
+    "createdAt": "2026-02-01T10:04:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-2222-4aaa-bbbb-000000000001",
+    "name": "Lars",
+    "team": "devops",
+    "funFact": "Har 200+ GitHub Actions workflows",
+    "superpower": "CI/CD-mester",
+    "createdAt": "2026-02-01T10:05:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-2222-4aaa-bbbb-000000000002",
+    "name": "Ingrid",
+    "team": "devops",
+    "funFact": "Kubernetes-sertifisert x3",
+    "superpower": "Container-orkestrering",
+    "createdAt": "2026-02-01T10:06:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-2222-4aaa-bbbb-000000000003",
+    "name": "Magnus",
+    "team": "devops",
+    "funFact": "Terraform alt, alltid",
+    "superpower": "Infrastruktur som kode",
+    "createdAt": "2026-02-01T10:07:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-2222-4aaa-bbbb-000000000004",
+    "name": "Astrid",
+    "team": "devops",
+    "funFact": "Monitorer alt med Grafana",
+    "superpower": "Observability-dronning",
+    "createdAt": "2026-02-01T10:08:00.000Z"
   }
 ]
