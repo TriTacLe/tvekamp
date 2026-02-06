@@ -1,21 +1,12 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { getData, setData } from '@/lib/storage';
+import type { GameResult } from '@/lib/types';
 
-const DATA_PATH = path.join(process.cwd(), 'data', 'results.json');
-
-function readResults() {
-  const raw = fs.readFileSync(DATA_PATH, 'utf-8');
-  return JSON.parse(raw);
-}
-
-function writeResults(data: unknown) {
-  fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2));
-}
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const results = readResults();
+  const results = await getData<GameResult>('results');
   return NextResponse.json(results);
 }
 
@@ -27,8 +18,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  const results = readResults();
-  const newResult = {
+  const results = await getData<GameResult>('results');
+  const newResult: GameResult = {
     id: uuidv4(),
     gameId,
     gameName,
@@ -39,7 +30,7 @@ export async function POST(request: Request) {
   };
 
   results.push(newResult);
-  writeResults(results);
+  await setData('results', results);
 
   return NextResponse.json(newResult, { status: 201 });
 }
