@@ -16,5 +16,14 @@
     "webPlayer": "Team Web",
     "devopsPlayer": "Team DevOps",
     "timestamp": "2026-01-27T18:46:00.924Z"
+  },
+  {
+    "id": "8cd98f87-cb78-468b-82a5-be4d83a7e64f",
+    "gameId": "15f34e83-1bcc-47e4-8bec-371e6a469d3f",
+    "gameName": "Test",
+    "winner": "devops",
+    "webPlayer": "Nora",
+    "devopsPlayer": "Lars",
+    "timestamp": "2026-02-06T21:17:32.829Z"
   }
 ]
