@@ -67,7 +67,7 @@ export default function PlayerWheelSelect({
             accentColor={teamColor}
           />
         ) : (
-          <div className="w-64 h-64 rounded-full bg-white/5 flex items-center justify-center">
+          <div className="w-96 h-96 rounded-full bg-white/5 flex items-center justify-center">
             <p className="text-yellow-400 font-body text-sm text-center px-4">
               Ingen tilgjengelige {step.includes('web') ? 'web' : 'devops'}-spillere
             </p>
@@ -251,7 +251,7 @@ function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
         ctx.translate(cx + Math.cos(midA) * textR, cy + Math.sin(midA) * textR);
         ctx.rotate(midA + Math.PI / 2);
         ctx.fillStyle = 'white';
-        ctx.font = `bold ${Math.min(14, 120 / items.length)}px sans-serif`;
+        ctx.font = `bold ${Math.min(18, 170 / items.length)}px sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         // Truncate long names
@@ -262,7 +262,7 @@ function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
 
       // Center cap
       ctx.beginPath();
-      ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 24, 0, Math.PI * 2);
       ctx.fillStyle = '#1a1a2e';
       ctx.fill();
 
@@ -340,7 +340,7 @@ function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
   }, [spinning, items, segmentAngle, draw, onResult]);
 
   const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1;
-  const displaySize = 280;
+  const displaySize = 400;
 
   return (
     <canvas

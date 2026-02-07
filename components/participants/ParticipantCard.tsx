@@ -30,11 +30,11 @@ export default function ParticipantCard({ participant, onDelete }: ParticipantCa
           <img
             src={participant.imageUrl}
             alt={participant.name}
-            className="w-36 h-36 rounded-full object-cover border-4 border-white/10 shadow-lg"
+            className="w-48 h-48 rounded-full object-cover border-4 border-white/10 shadow-lg"
           />
         ) : (
           <div
-            className={`w-36 h-36 rounded-full flex items-center justify-center text-4xl font-bold ${
+            className={`w-48 h-48 rounded-full flex items-center justify-center text-4xl font-bold ${
               isWeb ? 'web-gradient' : 'devops-gradient'
             }`}
           >
