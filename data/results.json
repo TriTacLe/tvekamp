@@ -34,5 +34,23 @@
     "webPlayer": "Henrik",
     "devopsPlayer": "Tri",
     "timestamp": "2026-02-06T21:30:49.781Z"
+  },
+  {
+    "id": "e3afe195-3e66-4836-b673-025b3f287b1a",
+    "gameId": "2",
+    "gameName": "Armbryting",
+    "winner": "web",
+    "webPlayer": "Emma",
+    "devopsPlayer": "Tri",
+    "timestamp": "2026-02-07T10:55:57.941Z"
+  },
+  {
+    "id": "ef36bbcb-4523-4b4f-80d9-71e7805e1377",
+    "gameId": "2",
+    "gameName": "Armbryting",
+    "winner": "web",
+    "webPlayer": "Sofia",
+    "devopsPlayer": "Astrid",
+    "timestamp": "2026-02-07T10:58:06.959Z"
   }
 ]
