@@ -135,9 +135,9 @@ export default function SpinWheel() {
   return (
     <div className="relative z-10 flex flex-col items-center">
       {/* 3D Wheel + overlaid SPIN button */}
-      <div className="relative w-full max-w-lg" style={{ height: '500px' }}>
+      <div className="relative w-full max-w-2xl" style={{ height: '600px' }}>
         <div className="absolute inset-0 pointer-events-none">
-          <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
+          <Canvas camera={{ position: [0, 0, 6.5], fov: 50 }}>
             <ambientLight intensity={0.5} />
             <directionalLight position={[3, 3, 5]} intensity={0.8} />
             <pointLight position={[-3, -3, 5]} intensity={0.3} color="#f97316" />
@@ -183,7 +183,7 @@ export default function SpinWheel() {
 
       {/* Reset panel toggle */}
       {phase === 'idle' && (playedGames.length > 0 || usedPlayers.length > 0) && (
-        <div className="mt-4 w-full max-w-lg">
+        <div className="mt-4 w-full max-w-2xl">
           <button
             onClick={() => setShowResetPanel(!showResetPanel)}
             className="text-white/40 hover:text-white/70 text-sm font-body transition-colors cursor-pointer"
