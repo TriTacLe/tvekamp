@@ -13,7 +13,8 @@ export interface Game {
   name: string;
   rules: string;
   time: number;
-  players: number;
+  playersPerTeam: number; // 0 = all, 1/2/3 = specific count
+  points: number;         // points awarded for winning
   visible: boolean;
   createdAt?: string;
 }
@@ -23,8 +24,9 @@ export interface GameResult {
   gameId: string;
   gameName: string;
   winner: 'web' | 'devops';
-  webPlayer: string;
-  devopsPlayer: string;
+  webPlayers: string;    // comma-separated names
+  devopsPlayers: string; // comma-separated names
+  points: number;        // points that were awarded
   timestamp: string;
 }
 

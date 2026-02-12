@@ -15,11 +15,12 @@ const VICTORY_IMAGES = [
 
 interface VictoryScreenProps {
   winnerTeam: 'web' | 'devops';
-  winnerName: string;
+  winnerNames: string[];
+  points: number;
   onDismiss: () => void;
 }
 
-export default function VictoryScreen({ winnerTeam, winnerName, onDismiss }: VictoryScreenProps) {
+export default function VictoryScreen({ winnerTeam, winnerNames, points, onDismiss }: VictoryScreenProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const [fading, setFading] = useState(false);
 
@@ -38,6 +39,10 @@ export default function VictoryScreen({ winnerTeam, winnerName, onDismiss }: Vic
   const teamGradient = winnerTeam === 'web'
     ? 'from-web-primary to-web-secondary'
     : 'from-devops-primary to-devops-secondary';
+
+  const displayNames = winnerNames.length > 3
+    ? teamLabel
+    : winnerNames.map((n) => n.split(' ')[0]).join(', ');
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
@@ -59,10 +64,11 @@ export default function VictoryScreen({ winnerTeam, winnerName, onDismiss }: Vic
             VINNER!
           </span>
         </h2>
-        <p className="font-display text-3xl text-white">{winnerName}</p>
+        <p className="font-display text-3xl text-white">{displayNames}</p>
         <p className={`font-body text-xl mt-1 bg-gradient-to-r ${teamGradient} bg-clip-text text-transparent`}>
           {teamLabel}
         </p>
+        <p className="font-body text-lg mt-2 text-yellow-400">+{points} poeng</p>
       </div>
 
       {/* Dismiss button */}

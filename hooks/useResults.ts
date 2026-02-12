@@ -28,8 +28,9 @@ export function useResults() {
       gameId: string;
       gameName: string;
       winner: 'web' | 'devops';
-      webPlayer: string;
-      devopsPlayer: string;
+      webPlayers: string;
+      devopsPlayers: string;
+      points: number;
     }) => {
       const res = await fetch('/api/results', {
         method: 'POST',
@@ -44,8 +45,21 @@ export function useResults() {
     []
   );
 
+  const clearResults = useCallback(async () => {
+    const res = await fetch('/api/results', { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to clear results');
+    setResults([]);
+  }, []);
+
+  const webScore = results
+    .filter((r) => r.winner === 'web')
+    .reduce((sum, r) => sum + (r.points || 1), 0);
+  const devopsScore = results
+    .filter((r) => r.winner === 'devops')
+    .reduce((sum, r) => sum + (r.points || 1), 0);
+
   const webWins = results.filter((r) => r.winner === 'web').length;
   const devopsWins = results.filter((r) => r.winner === 'devops').length;
 
-  return { results, webWins, devopsWins, loading, refetch: fetchResults, submitResult };
+  return { results, webWins, devopsWins, webScore, devopsScore, loading, refetch: fetchResults, submitResult, clearResults };
 }
