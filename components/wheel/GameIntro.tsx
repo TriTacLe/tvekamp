@@ -10,6 +10,10 @@ interface GameIntroProps {
 }
 
 export default function GameIntro({ game, onContinue, onBack }: GameIntroProps) {
+  const playersLabel = game.playersPerTeam === 0
+    ? 'Alle'
+    : `${game.playersPerTeam} per lag`;
+
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
@@ -24,7 +28,8 @@ export default function GameIntro({ game, onContinue, onBack }: GameIntroProps) 
           <p className="text-white/70 font-body leading-relaxed">{game.rules}</p>
           <div className="mt-3 flex justify-center gap-4 text-sm text-white/40">
             <span>⏱ {game.time} min</span>
-            <span>👥 {game.players} spillere</span>
+            <span>👥 {playersLabel}</span>
+            <span>⭐ {game.points} poeng</span>
           </div>
         </div>
         <div className="flex gap-3 justify-center">
@@ -35,7 +40,7 @@ export default function GameIntro({ game, onContinue, onBack }: GameIntroProps) 
             Tilbake
           </button>
           <Button variant="primary" size="lg" onClick={onContinue}>
-            Velg Spillere
+            {game.playersPerTeam === 0 ? 'Start Kamp!' : 'Velg Spillere'}
           </Button>
         </div>
       </div>

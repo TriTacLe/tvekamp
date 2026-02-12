@@ -7,6 +7,14 @@ export const WHEEL_COLORS = [
   '#14b8a6', // teal
   '#f59e0b', // amber
   '#3b82f6', // blue
+  '#ef4444', // red
+  '#a855f7', // purple
+  '#06b6d4', // cyan
+  '#84cc16', // lime
+  '#f43f5e', // rose
+  '#0ea5e9', // sky
+  '#d946ef', // fuchsia
+  '#10b981', // emerald
 ];
 
 export const TEAM_CONFIG = {

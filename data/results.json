@@ -1,56 +1,12 @@
 [
   {
-    "id": "b25eb1c4-6cb3-411f-bfc8-c0201172ae17",
-    "gameId": "15f34e83-1bcc-47e4-8bec-371e6a469d3f",
-    "gameName": "Test",
-    "winner": "web",
-    "webPlayer": "Team Web",
-    "devopsPlayer": "Team DevOps",
-    "timestamp": "2026-01-27T18:42:15.947Z"
-  },
-  {
-    "id": "49fb319f-0184-48f3-bfd1-3252cd281774",
+    "id": "45132fcc-58b4-4c50-b6ab-3976b623ebf6",
     "gameId": "3",
     "gameName": "Trivia Quiz",
-    "winner": "devops",
-    "webPlayer": "Team Web",
-    "devopsPlayer": "Team DevOps",
-    "timestamp": "2026-01-27T18:46:00.924Z"
-  },
-  {
-    "id": "8cd98f87-cb78-468b-82a5-be4d83a7e64f",
-    "gameId": "15f34e83-1bcc-47e4-8bec-371e6a469d3f",
-    "gameName": "Test",
-    "winner": "devops",
-    "webPlayer": "Nora",
-    "devopsPlayer": "Lars",
-    "timestamp": "2026-02-06T21:17:32.829Z"
-  },
-  {
-    "id": "c152662d-bb5f-4b5e-b0f9-b7c26c8649e5",
-    "gameId": "15f34e83-1bcc-47e4-8bec-371e6a469d3f",
-    "gameName": "Test",
-    "winner": "devops",
-    "webPlayer": "Henrik",
-    "devopsPlayer": "Tri",
-    "timestamp": "2026-02-06T21:30:49.781Z"
-  },
-  {
-    "id": "e3afe195-3e66-4836-b673-025b3f287b1a",
-    "gameId": "2",
-    "gameName": "Armbryting",
     "winner": "web",
-    "webPlayer": "Emma",
-    "devopsPlayer": "Tri",
-    "timestamp": "2026-02-07T10:55:57.941Z"
-  },
-  {
-    "id": "ef36bbcb-4523-4b4f-80d9-71e7805e1377",
-    "gameId": "2",
-    "gameName": "Armbryting",
-    "winner": "web",
-    "webPlayer": "Sofia",
-    "devopsPlayer": "Astrid",
-    "timestamp": "2026-02-07T10:58:06.959Z"
+    "webPlayers": "David Salguero Spilde",
+    "devopsPlayers": "Sebastian Kaul",
+    "points": 1,
+    "timestamp": "2026-02-12T21:48:04.761Z"
   }
 ]
