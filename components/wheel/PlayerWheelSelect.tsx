@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { WHEEL_COLORS } from '@/lib/constants';
 import type { Participant } from '@/lib/types';
 
@@ -8,105 +8,278 @@ interface PlayerWheelSelectProps {
   webPlayers: Participant[];
   devopsPlayers: Participant[];
   usedPlayerNames: Set<string>;
-  onSelect: (webPlayer: string, devopsPlayer: string) => void;
+  playersPerTeam: number;
+  onSelect: (webPlayers: string[], devopsPlayers: string[]) => void;
   onBack: () => void;
 }
 
-type Step = 'spin-web' | 'result-web' | 'spin-devops' | 'result-devops';
+type SelectionMode = 'wheel' | 'manual';
+type TeamPhase = 'web' | 'devops';
+
+/** Get a unique short display name — handle duplicate first names by adding last initial */
+function getDisplayNames(players: Participant[]): Map<string, string> {
+  const firstNames = new Map<string, number>();
+  players.forEach((p) => {
+    const first = p.name.split(' ')[0];
+    firstNames.set(first, (firstNames.get(first) || 0) + 1);
+  });
+
+  const result = new Map<string, string>();
+  players.forEach((p) => {
+    const parts = p.name.split(' ');
+    const first = parts[0];
+    if ((firstNames.get(first) || 0) > 1 && parts.length > 1) {
+      // Add last name initial for disambiguation
+      const lastInitial = parts[parts.length - 1][0];
+      result.set(p.name, `${first} ${lastInitial}.`);
+    } else {
+      result.set(p.name, first);
+    }
+  });
+  return result;
+}
 
 export default function PlayerWheelSelect({
   webPlayers,
   devopsPlayers,
   usedPlayerNames,
+  playersPerTeam,
   onSelect,
   onBack,
 }: PlayerWheelSelectProps) {
-  const [step, setStep] = useState<Step>('spin-web');
-  const [chosenWeb, setChosenWeb] = useState('');
-  const [chosenDevops, setChosenDevops] = useState('');
+  const [mode, setMode] = useState<SelectionMode>('wheel');
+  const [teamPhase, setTeamPhase] = useState<TeamPhase>('web');
+  const [chosenWeb, setChosenWeb] = useState<string[]>([]);
+  const [chosenDevops, setChosenDevops] = useState<string[]>([]);
   const [spinning, setSpinning] = useState(false);
+  const [currentSpinResult, setCurrentSpinResult] = useState<string | null>(null);
 
-  const availableWeb = webPlayers.filter((p) => !usedPlayerNames.has(p.name));
-  const availableDevops = devopsPlayers.filter((p) => !usedPlayerNames.has(p.name));
+  const availableWeb = useMemo(
+    () => webPlayers.filter((p) => !usedPlayerNames.has(p.name) && !chosenWeb.includes(p.name)),
+    [webPlayers, usedPlayerNames, chosenWeb]
+  );
+  const availableDevops = useMemo(
+    () => devopsPlayers.filter((p) => !usedPlayerNames.has(p.name) && !chosenDevops.includes(p.name)),
+    [devopsPlayers, usedPlayerNames, chosenDevops]
+  );
 
-  const handleWebResult = useCallback((name: string) => {
-    setChosenWeb(name);
+  const currentTeamPlayers = teamPhase === 'web' ? availableWeb : availableDevops;
+  const currentChosen = teamPhase === 'web' ? chosenWeb : chosenDevops;
+  const needed = playersPerTeam;
+  const teamLabel = teamPhase === 'web' ? 'Web' : 'DevOps';
+  const teamColor = teamPhase === 'web' ? '#6366f1' : '#f97316';
+  const teamEmoji = teamPhase === 'web' ? '🌐' : '🔧';
+
+  const displayNames = useMemo(
+    () => getDisplayNames(currentTeamPlayers),
+    [currentTeamPlayers]
+  );
+
+  // All participants for manual mode (show available from the original pool, minus already used/chosen)
+  const manualWebPool = useMemo(
+    () => webPlayers.filter((p) => !usedPlayerNames.has(p.name)),
+    [webPlayers, usedPlayerNames]
+  );
+  const manualDevopsPool = useMemo(
+    () => devopsPlayers.filter((p) => !usedPlayerNames.has(p.name)),
+    [devopsPlayers, usedPlayerNames]
+  );
+
+  const handleWheelResult = useCallback((name: string) => {
+    setCurrentSpinResult(name);
     setSpinning(false);
-    setStep('result-web');
   }, []);
 
-  const handleDevopsResult = useCallback((name: string) => {
-    setChosenDevops(name);
-    setSpinning(false);
-    setStep('result-devops');
-  }, []);
+  const acceptSpinResult = () => {
+    if (!currentSpinResult) return;
+    if (teamPhase === 'web') {
+      const newChosen = [...chosenWeb, currentSpinResult];
+      setChosenWeb(newChosen);
+      setCurrentSpinResult(null);
+      if (newChosen.length >= needed) {
+        setTeamPhase('devops');
+      }
+    } else {
+      const newChosen = [...chosenDevops, currentSpinResult];
+      setChosenDevops(newChosen);
+      setCurrentSpinResult(null);
+      if (newChosen.length >= needed) {
+        // Both teams done
+        onSelect(chosenWeb, newChosen);
+      }
+    }
+  };
 
-  const currentPlayers = step.includes('web') ? availableWeb : availableDevops;
-  const teamLabel = step.includes('web') ? '🌐 Web' : '🔧 DevOps';
-  const teamColor = step.includes('web') ? '#6366f1' : '#f97316';
+  const rejectSpinResult = () => {
+    setCurrentSpinResult(null);
+  };
+
+  const startGame = () => {
+    onSelect(chosenWeb, chosenDevops);
+  };
+
+  // Manual mode toggle
+  const toggleManualPlayer = (name: string) => {
+    if (teamPhase === 'web') {
+      if (chosenWeb.includes(name)) {
+        setChosenWeb(chosenWeb.filter((n) => n !== name));
+      } else if (chosenWeb.length < needed) {
+        setChosenWeb([...chosenWeb, name]);
+      }
+    } else {
+      if (chosenDevops.includes(name)) {
+        setChosenDevops(chosenDevops.filter((n) => n !== name));
+      } else if (chosenDevops.length < needed) {
+        setChosenDevops([...chosenDevops, name]);
+      }
+    }
+  };
+
+  const confirmManualSelection = () => {
+    if (teamPhase === 'web' && chosenWeb.length >= needed) {
+      setTeamPhase('devops');
+    } else if (teamPhase === 'devops' && chosenDevops.length >= needed) {
+      onSelect(chosenWeb, chosenDevops);
+    }
+  };
+
+  const handleBack = () => {
+    if (teamPhase === 'devops') {
+      setChosenDevops([]);
+      setCurrentSpinResult(null);
+      setTeamPhase('web');
+    } else {
+      onBack();
+    }
+  };
+
+  const statusText = (() => {
+    if (mode === 'wheel') {
+      if (currentSpinResult) {
+        return `${teamEmoji} ${teamLabel}: ${currentSpinResult} — Godta eller spin igjen`;
+      }
+      const remaining = needed - currentChosen.length;
+      if (remaining > 1) {
+        return `Spin for ${teamLabel}-spiller ${currentChosen.length + 1}/${needed}`;
+      }
+      return `Spin for å velge ${teamLabel}-spiller`;
+    }
+    return `Velg ${needed} ${teamLabel}-spillere`;
+  })();
+
+  const manualPool = teamPhase === 'web' ? manualWebPool : manualDevopsPool;
+  const manualDisplayNames = useMemo(() => getDisplayNames(manualPool), [manualPool]);
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
       <div className="relative flex flex-col items-center max-w-lg w-full">
         <h2 className="font-display text-3xl mb-2 text-white">Velg Spillere</h2>
-        <p className="font-body text-white/60 mb-4">
-          {step === 'spin-web' && 'Spin for å velge Web-spiller'}
-          {step === 'result-web' && `Web: ${chosenWeb} — Godta eller spin igjen`}
-          {step === 'spin-devops' && 'Spin for å velge DevOps-spiller'}
-          {step === 'result-devops' && `DevOps: ${chosenDevops} — Godta eller spin igjen`}
-        </p>
 
-        {/* The wheel */}
-        {currentPlayers.length > 0 ? (
-          <MiniWheel
-            key={step.includes('web') ? 'web' : 'devops'}
-            items={currentPlayers.map((p) => p.name)}
-            spinning={spinning}
-            onResult={step.includes('web') ? handleWebResult : handleDevopsResult}
-            accentColor={teamColor}
-          />
+        {/* Mode toggle */}
+        <div className="flex rounded-full bg-white/10 p-1 mb-4">
+          <button
+            onClick={() => setMode('wheel')}
+            className={`px-4 py-1.5 rounded-full text-sm font-body transition-all cursor-pointer ${
+              mode === 'wheel' ? 'bg-purple-600 text-white' : 'text-white/50 hover:text-white'
+            }`}
+          >
+            Spin Hjulet
+          </button>
+          <button
+            onClick={() => setMode('manual')}
+            className={`px-4 py-1.5 rounded-full text-sm font-body transition-all cursor-pointer ${
+              mode === 'manual' ? 'bg-purple-600 text-white' : 'text-white/50 hover:text-white'
+            }`}
+          >
+            Velg Manuelt
+          </button>
+        </div>
+
+        <p className="font-body text-white/60 mb-4">{statusText}</p>
+
+        {mode === 'wheel' ? (
+          /* ── Wheel Mode ── */
+          <>
+            {currentTeamPlayers.length > 0 ? (
+              <MiniWheel
+                key={`${teamPhase}-${currentChosen.length}`}
+                items={currentTeamPlayers.map((p) => p.name)}
+                displayItems={currentTeamPlayers.map((p) => displayNames.get(p.name) || p.name.split(' ')[0])}
+                spinning={spinning}
+                onResult={handleWheelResult}
+                accentColor={teamColor}
+              />
+            ) : (
+              <div className="w-96 h-96 rounded-full bg-white/5 flex items-center justify-center">
+                <p className="text-yellow-400 font-body text-sm text-center px-4">
+                  Ingen tilgjengelige {teamLabel}-spillere
+                </p>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="w-96 h-96 rounded-full bg-white/5 flex items-center justify-center">
-            <p className="text-yellow-400 font-body text-sm text-center px-4">
-              Ingen tilgjengelige {step.includes('web') ? 'web' : 'devops'}-spillere
-            </p>
+          /* ── Manual Mode ── */
+          <div className="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto w-full px-2">
+            {manualPool.map((p) => {
+              const isChosen = teamPhase === 'web'
+                ? chosenWeb.includes(p.name)
+                : chosenDevops.includes(p.name);
+              const shortName = manualDisplayNames.get(p.name) || p.name.split(' ')[0];
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => toggleManualPlayer(p.name)}
+                  className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                    isChosen
+                      ? 'bg-purple-600/40 border-2 border-purple-400'
+                      : 'bg-white/5 border-2 border-transparent hover:bg-white/10'
+                  }`}
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold shrink-0"
+                    style={{ backgroundColor: teamColor + '40', color: teamColor }}
+                  >
+                    {shortName[0]}
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="font-body font-semibold text-sm text-white truncate">{p.name}</p>
+                    {p.superpower && (
+                      <p className="text-xs text-white/40 truncate">{p.superpower}</p>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
 
         {/* Chosen players summary */}
-        {(chosenWeb || chosenDevops) && (
-          <div className="flex gap-4 mt-4 font-body text-sm">
-            {chosenWeb && (
-              <span className="px-3 py-1 rounded-full bg-web-primary/20 text-web-primary">
-                🌐 {chosenWeb}
+        {(chosenWeb.length > 0 || chosenDevops.length > 0) && (
+          <div className="flex flex-wrap gap-2 mt-4 font-body text-sm justify-center">
+            {chosenWeb.map((name) => (
+              <span key={name} className="px-3 py-1 rounded-full bg-web-primary/20 text-web-primary">
+                🌐 {name.split(' ')[0]}
               </span>
-            )}
-            {chosenDevops && (
-              <span className="px-3 py-1 rounded-full bg-devops-primary/20 text-devops-primary">
-                🔧 {chosenDevops}
+            ))}
+            {chosenDevops.map((name) => (
+              <span key={name} className="px-3 py-1 rounded-full bg-devops-primary/20 text-devops-primary">
+                🔧 {name.split(' ')[0]}
               </span>
-            )}
+            ))}
           </div>
         )}
 
         {/* Action buttons */}
         <div className="flex gap-3 mt-6">
           <button
-            onClick={() => {
-              if (step === 'spin-web' || step === 'result-web') {
-                onBack();
-              } else {
-                setChosenDevops('');
-                setStep('result-web');
-              }
-            }}
+            onClick={handleBack}
             className="px-6 py-3 rounded-full font-body text-sm text-white/60 hover:text-white bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
           >
             Tilbake
           </button>
 
-          {(step === 'spin-web' || step === 'spin-devops') && currentPlayers.length > 0 && (
+          {mode === 'wheel' && !currentSpinResult && currentTeamPlayers.length > 0 && (
             <button
               onClick={() => setSpinning(true)}
               disabled={spinning}
@@ -119,23 +292,20 @@ export default function PlayerWheelSelect({
                 cursor-pointer disabled:opacity-50
               "
             >
-              SPIN {teamLabel}
+              SPIN {teamEmoji} {teamLabel}
             </button>
           )}
 
-          {step === 'result-web' && (
+          {mode === 'wheel' && currentSpinResult && (
             <>
               <button
-                onClick={() => {
-                  setChosenWeb('');
-                  setStep('spin-web');
-                }}
+                onClick={rejectSpinResult}
                 className="px-6 py-3 rounded-full font-body text-sm text-white/60 hover:text-white bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
               >
                 Spin igjen
               </button>
               <button
-                onClick={() => setStep('spin-devops')}
+                onClick={acceptSpinResult}
                 className="
                   px-8 py-3 rounded-full font-display text-lg tracking-wider
                   bg-gradient-to-r from-green-600 to-emerald-600
@@ -144,35 +314,33 @@ export default function PlayerWheelSelect({
                   hover:scale-105 active:scale-95 border border-white/20 cursor-pointer
                 "
               >
-                Godta
+                {teamPhase === 'web' && chosenWeb.length + 1 >= needed
+                  ? 'Godta'
+                  : teamPhase === 'devops' && chosenDevops.length + 1 >= needed
+                    ? 'Start Kamp!'
+                    : 'Godta'}
               </button>
             </>
           )}
 
-          {step === 'result-devops' && (
-            <>
-              <button
-                onClick={() => {
-                  setChosenDevops('');
-                  setStep('spin-devops');
-                }}
-                className="px-6 py-3 rounded-full font-body text-sm text-white/60 hover:text-white bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
-              >
-                Spin igjen
-              </button>
-              <button
-                onClick={() => onSelect(chosenWeb, chosenDevops)}
-                className="
-                  px-8 py-3 rounded-full font-display text-lg tracking-wider
-                  bg-gradient-to-r from-green-600 to-emerald-600
-                  hover:from-green-500 hover:to-emerald-500
-                  shadow-xl shadow-green-500/30 transition-all
-                  hover:scale-105 active:scale-95 border border-white/20 cursor-pointer
-                "
-              >
-                Start Kamp!
-              </button>
-            </>
+          {mode === 'manual' && (
+            <button
+              onClick={confirmManualSelection}
+              disabled={
+                (teamPhase === 'web' && chosenWeb.length < needed) ||
+                (teamPhase === 'devops' && chosenDevops.length < needed)
+              }
+              className="
+                px-8 py-3 rounded-full font-display text-lg tracking-wider
+                bg-gradient-to-r from-green-600 to-emerald-600
+                hover:from-green-500 hover:to-emerald-500
+                shadow-xl shadow-green-500/30 transition-all
+                hover:scale-105 active:scale-95 border border-white/20
+                cursor-pointer disabled:opacity-50
+              "
+            >
+              {teamPhase === 'web' ? 'Bekreft Web' : 'Start Kamp!'}
+            </button>
           )}
         </div>
       </div>
@@ -184,12 +352,13 @@ export default function PlayerWheelSelect({
 
 interface MiniWheelProps {
   items: string[];
+  displayItems: string[];
   spinning: boolean;
   onResult: (item: string) => void;
   accentColor: string;
 }
 
-function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
+function MiniWheel({ items, displayItems, spinning, onResult, accentColor }: MiniWheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rotationRef = useRef(0);
   const animRef = useRef<number>(0);
@@ -244,7 +413,8 @@ function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Text
+        // Text — use display name (first name / disambiguated)
+        const label = displayItems[i] || item;
         const midA = startA + segmentAngle / 2;
         const textR = radius * 0.65;
         ctx.save();
@@ -254,8 +424,7 @@ function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
         ctx.font = `bold ${Math.min(18, 170 / items.length)}px sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        // Truncate long names
-        const displayName = item.length > 12 ? item.slice(0, 11) + '…' : item;
+        const displayName = label.length > 14 ? label.slice(0, 13) + '…' : label;
         ctx.fillText(displayName, 0, 0);
         ctx.restore();
       });
@@ -282,7 +451,7 @@ function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
       ctx.fillStyle = '#ff4444';
       ctx.fill();
     },
-    [items, segmentAngle]
+    [items, displayItems, segmentAngle]
   );
 
   // Initial draw
@@ -296,7 +465,6 @@ function MiniWheel({ items, spinning, onResult, accentColor }: MiniWheelProps) {
 
     const targetIndex = Math.floor(Math.random() * items.length);
     const targetAngle = targetIndex * segmentAngle + segmentAngle / 2;
-    // Pointer is at top (–π/2), spin so target segment is under pointer
     const totalSpin = Math.PI * 10 + (Math.PI * 2 - targetAngle) - Math.PI / 2;
 
     spinStateRef.current = {

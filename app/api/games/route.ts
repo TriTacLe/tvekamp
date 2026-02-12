@@ -12,7 +12,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { name, rules, time, players } = body;
+  const { name, rules, time, playersPerTeam, points } = body;
 
   if (!name || !rules) {
     return NextResponse.json({ error: 'name and rules are required' }, { status: 400 });
@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
     name,
     rules,
     time: time || 5,
-    players: players || 2,
+    playersPerTeam: playersPerTeam ?? 1,
+    points: points || 1,
     visible: true,
     createdAt: new Date().toISOString(),
   };

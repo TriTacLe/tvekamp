@@ -23,7 +23,7 @@ export function useGames() {
     fetchGames();
   }, [fetchGames]);
 
-  const addGame = useCallback(async (data: { name: string; rules: string; time?: number; players?: number }) => {
+  const addGame = useCallback(async (data: { name: string; rules: string; time?: number; playersPerTeam?: number; points?: number }) => {
     const res = await fetch('/api/games', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

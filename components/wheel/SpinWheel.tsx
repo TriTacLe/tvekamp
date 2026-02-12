@@ -23,16 +23,19 @@ export default function SpinWheel() {
     usedPlayerNames,
     currentGame,
     setCurrentGame,
-    selectedWebPlayer,
-    selectedDevopsPlayer,
-    setSelectedWebPlayer,
-    setSelectedDevopsPlayer,
+    selectedWebPlayers,
+    selectedDevopsPlayers,
+    setSelectedWebPlayers,
+    setSelectedDevopsPlayers,
     markGamePlayed,
     unmarkGamePlayed,
     resetAllGames,
     markPlayersUsed,
     unmarkPlayerUsed,
     resetAllPlayers,
+    addScore,
+    webScore,
+    devopsScore,
     triggerConfetti,
     lastWinner,
     setLastWinner,
@@ -74,8 +77,20 @@ export default function SpinWheel() {
   };
 
   const handleContinueToSelect = () => {
+    if (!currentGame) return;
     playSound('click');
-    setPhase('player-select');
+
+    // For "all" games (playersPerTeam === 0), skip player selection
+    if (currentGame.playersPerTeam === 0) {
+      const allWeb = webPlayers.map((p) => p.name);
+      const allDevops = devopsPlayers.map((p) => p.name);
+      setSelectedWebPlayers(allWeb);
+      setSelectedDevopsPlayers(allDevops);
+      playSound('gameStart');
+      setPhase('active');
+    } else {
+      setPhase('player-select');
+    }
   };
 
   const handleSkipGame = () => {
@@ -84,9 +99,9 @@ export default function SpinWheel() {
     setPhase('idle');
   };
 
-  const handleSelectPlayers = (webPlayer: string, devopsPlayer: string) => {
-    setSelectedWebPlayer(webPlayer);
-    setSelectedDevopsPlayer(devopsPlayer);
+  const handleSelectPlayers = (webPlayerNames: string[], devopsPlayerNames: string[]) => {
+    setSelectedWebPlayers(webPlayerNames);
+    setSelectedDevopsPlayers(devopsPlayerNames);
     playSound('gameStart');
     setPhase('active');
   };
@@ -104,11 +119,16 @@ export default function SpinWheel() {
         gameId: currentGame.id,
         gameName: currentGame.name,
         winner,
-        webPlayer: selectedWebPlayer,
-        devopsPlayer: selectedDevopsPlayer,
+        webPlayers: selectedWebPlayers.join(', '),
+        devopsPlayers: selectedDevopsPlayers.join(', '),
+        points: currentGame.points,
       });
       markGamePlayed(currentGame.id);
-      markPlayersUsed(selectedWebPlayer, selectedDevopsPlayer);
+      // Only mark individual players used for non-all games
+      if (currentGame.playersPerTeam > 0) {
+        markPlayersUsed([...selectedWebPlayers, ...selectedDevopsPlayers]);
+      }
+      addScore(winner, currentGame.points);
       triggerConfetti();
       playSound('winner');
       setLastWinner(winner);
@@ -134,6 +154,21 @@ export default function SpinWheel() {
 
   return (
     <div className="relative z-10 flex flex-col items-center">
+      {/* Scoreboard */}
+      {(webScore > 0 || devopsScore > 0) && phase === 'idle' && (
+        <div className="flex items-center gap-6 mb-4">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-web-primary/20">
+            <span className="text-web-primary font-display text-lg">Web</span>
+            <span className="text-white font-display text-2xl">{webScore}</span>
+          </div>
+          <span className="text-white/30 font-display text-sm">POENG</span>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-devops-primary/20">
+            <span className="text-devops-primary font-display text-lg">DevOps</span>
+            <span className="text-white font-display text-2xl">{devopsScore}</span>
+          </div>
+        </div>
+      )}
+
       {/* 3D Wheel + overlaid SPIN button */}
       <div className="relative w-full max-w-2xl" style={{ height: '600px' }}>
         <div className="absolute inset-0 pointer-events-none">
@@ -260,11 +295,12 @@ export default function SpinWheel() {
         <GameIntro game={currentGame} onContinue={handleContinueToSelect} onBack={handleSkipGame} />
       )}
 
-      {phase === 'player-select' && (
+      {phase === 'player-select' && currentGame && (
         <PlayerWheelSelect
           webPlayers={webPlayers}
           devopsPlayers={devopsPlayers}
           usedPlayerNames={usedPlayerNames}
+          playersPerTeam={currentGame.playersPerTeam}
           onSelect={handleSelectPlayers}
           onBack={() => setPhase('reveal')}
         />
@@ -273,8 +309,8 @@ export default function SpinWheel() {
       {phase === 'active' && currentGame && (
         <GameActive
           game={currentGame}
-          webPlayer={selectedWebPlayer}
-          devopsPlayer={selectedDevopsPlayer}
+          webPlayers={selectedWebPlayers}
+          devopsPlayers={selectedDevopsPlayers}
           onFinish={handleFinishGame}
         />
       )}
@@ -282,8 +318,9 @@ export default function SpinWheel() {
       {phase === 'result' && currentGame && (
         <ResultModal
           gameName={currentGame.name}
-          webPlayer={selectedWebPlayer}
-          devopsPlayer={selectedDevopsPlayer}
+          points={currentGame.points}
+          webPlayers={selectedWebPlayers}
+          devopsPlayers={selectedDevopsPlayers}
           onSelectWinner={handleSelectWinner}
         />
       )}
@@ -291,7 +328,8 @@ export default function SpinWheel() {
       {phase === 'victory' && lastWinner && (
         <VictoryScreen
           winnerTeam={lastWinner}
-          winnerName={lastWinner === 'web' ? selectedWebPlayer : selectedDevopsPlayer}
+          winnerNames={lastWinner === 'web' ? selectedWebPlayers : selectedDevopsPlayers}
+          points={currentGame?.points || 1}
           onDismiss={handleVictoryDismiss}
         />
       )}
