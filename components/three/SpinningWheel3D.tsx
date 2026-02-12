@@ -13,8 +13,28 @@ interface SpinningWheel3DProps {
   onSpinComplete: (game: Game) => void;
 }
 
-const radius = 2.8;
-const labelRadius = radius * 0.6;
+const RADIUS = 2.8;
+const DEPTH = 0.25;
+
+/** Short display names for the wheel */
+const ABBREVS: Record<string, string> = {
+  "Stein, Saks, Papir": "Saks Papir",
+  "Første man til micen": "Til micen",
+  "Gjett gjenstander": "Gjett gjenst.",
+  "Speed Debugging": "Debugging",
+  "Blitz Typeracer": "Typeracer",
+  "Stirrekonkurranse": "Stirring",
+  "Emoji-gjetting": "Emoji",
+  "Nynne med vann": "Nynne",
+  "Lefse-smack": "Lefse",
+  "Musikkquiz": "Musikk",
+};
+
+function getLabel(name: string, maxLen: number): string {
+  const short = ABBREVS[name] || name;
+  if (short.length <= maxLen) return short;
+  return short.slice(0, maxLen - 1) + "…";
+}
 
 export default function SpinningWheel3D({
   games,
@@ -31,21 +51,26 @@ export default function SpinningWheel3D({
     targetIndex: -1,
   });
 
-  const segmentAngle =
-    games.length > 0 ? (Math.PI * 2) / games.length : Math.PI * 2;
+  const n = games.length;
+  const segmentAngle = n > 0 ? (Math.PI * 2) / n : Math.PI * 2;
 
-  // Create segments
+  // Dynamic sizing based on segment count
+  const fontSize = Math.min(0.2, 2.2 / n);
+  const maxLabelLen = n > 12 ? 10 : n > 8 ? 12 : 16;
+  // Place labels along the radial middle of each segment, reading outward
+  const labelR = RADIUS * 0.58;
+
   const segments = useMemo(() => {
-    if (games.length === 0) return [];
+    if (n === 0) return [];
     return games.map((game, i) => {
       const shape = new THREE.Shape();
       const startAngle = i * segmentAngle;
       const endAngle = startAngle + segmentAngle;
       shape.moveTo(0, 0);
-      const steps = 32;
+      const steps = 48;
       for (let s = 0; s <= steps; s++) {
-        const angle = startAngle + (s / steps) * (endAngle - startAngle);
-        shape.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        const a = startAngle + (s / steps) * (endAngle - startAngle);
+        shape.lineTo(Math.cos(a) * RADIUS, Math.sin(a) * RADIUS);
       }
       shape.lineTo(0, 0);
 
@@ -56,43 +81,53 @@ export default function SpinningWheel3D({
         midAngle: startAngle + segmentAngle / 2,
       };
     });
-  }, [games, segmentAngle]);
+  }, [games, n, segmentAngle]);
+
+  // Border lines between segments
+  const borderLines = useMemo(() => {
+    if (n === 0) return [];
+    return games.map((_, i) => {
+      const a = i * segmentAngle;
+      return {
+        start: new THREE.Vector3(0, 0, DEPTH + 0.01),
+        end: new THREE.Vector3(
+          Math.cos(a) * RADIUS,
+          Math.sin(a) * RADIUS,
+          DEPTH + 0.01
+        ),
+      };
+    });
+  }, [n, segmentAngle, games]);
 
   const startSpin = useCallback(() => {
-    if (games.length === 0) return;
-    const targetIndex = Math.floor(Math.random() * games.length);
+    if (n === 0) return;
+    const targetIndex = Math.floor(Math.random() * n);
     const currentAngle = wheelRef.current?.rotation.z ?? 0;
-    // Spin at least 5 full rotations + land on target
     const targetAngle = targetIndex * segmentAngle + segmentAngle / 2;
-    const totalSpin = Math.PI * 10 + (Math.PI * 2 - targetAngle) + Math.PI / 2;
+    const totalSpin =
+      Math.PI * 10 + (Math.PI * 2 - targetAngle) + Math.PI / 2;
 
     spinStateRef.current = {
       isSpinning: true,
-      startTime: -1, // will be set on first frame
+      startTime: -1,
       duration: 4 + Math.random() * 2,
       startAngle: currentAngle,
       totalSpin,
       targetIndex,
     };
-  }, [games, segmentAngle]);
+  }, [n, segmentAngle]);
 
   useEffect(() => {
-    if (spinning) {
-      startSpin();
-    }
+    if (spinning) startSpin();
   }, [spinning, startSpin]);
 
   useFrame(({ clock }) => {
     const state = spinStateRef.current;
     if (!state.isSpinning || !wheelRef.current) return;
 
-    if (state.startTime < 0) {
-      state.startTime = clock.getElapsedTime();
-    }
+    if (state.startTime < 0) state.startTime = clock.getElapsedTime();
     const elapsed = clock.getElapsedTime() - state.startTime;
     const progress = Math.min(elapsed / state.duration, 1);
-
-    // Cubic ease-out
     const eased = 1 - Math.pow(1 - progress, 3);
     wheelRef.current.rotation.z = state.startAngle + state.totalSpin * eased;
 
@@ -102,11 +137,11 @@ export default function SpinningWheel3D({
     }
   });
 
-  if (games.length === 0) {
+  if (n === 0) {
     return (
       <group>
         <mesh>
-          <circleGeometry args={[radius, 64]} />
+          <circleGeometry args={[RADIUS, 64]} />
           <meshStandardMaterial color="#1a1a2e" />
         </mesh>
         <Text
@@ -124,65 +159,118 @@ export default function SpinningWheel3D({
 
   return (
     <group>
-      {/* Wheel */}
+      {/* Wheel body */}
       <group ref={wheelRef}>
         {segments.map((seg, i) => (
           <group key={i}>
+            {/* Segment */}
             <mesh>
               <extrudeGeometry
                 args={[
                   seg.shape,
                   {
-                    depth: 0.3,
+                    depth: DEPTH,
                     bevelEnabled: true,
-                    bevelThickness: 0.02,
-                    bevelSize: 0.02,
+                    bevelThickness: 0.015,
+                    bevelSize: 0.015,
                   },
                 ]}
               />
-              <meshStandardMaterial color={seg.color} />
+              <meshStandardMaterial
+                color={seg.color}
+                roughness={0.4}
+                metalness={0.1}
+              />
             </mesh>
-            {/* Label */}
+
+            {/* Label — rotated to read radially outward */}
             <Text
               position={[
-                Math.cos(seg.midAngle) * labelRadius,
-                Math.sin(seg.midAngle) * labelRadius,
-                0.35,
+                Math.cos(seg.midAngle) * labelR,
+                Math.sin(seg.midAngle) * labelR,
+                DEPTH + 0.02,
               ]}
-              rotation={[0, 0, seg.midAngle - Math.PI / 2]}
-              fontSize={0.22}
-              maxWidth={2}
+              rotation={[0, 0, seg.midAngle]}
+              fontSize={fontSize}
+              maxWidth={RADIUS * 0.45}
               color="white"
               anchorX="center"
               anchorY="middle"
               fontWeight="bold"
+              outlineWidth={0.015}
+              outlineColor="#000000"
             >
-              {seg.game.name}
+              {getLabel(seg.game.name, maxLabelLen)}
             </Text>
           </group>
         ))}
 
-        {/* Center cap */}
-        <mesh position={[0, 0, 0.35]}>
-          <circleGeometry args={[0.4, 32]} />
-          <meshStandardMaterial color="#1a1a2e" />
+        {/* Segment border lines */}
+        {borderLines.map((line, i) => (
+          <line key={`border-${i}`}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                args={[
+                  new Float32Array([
+                    line.start.x, line.start.y, line.start.z,
+                    line.end.x, line.end.y, line.end.z,
+                  ]),
+                  3,
+                ]}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color="#ffffff" opacity={0.25} transparent />
+          </line>
+        ))}
+
+        {/* Center cap — dark with ring */}
+        <mesh position={[0, 0, DEPTH + 0.02]}>
+          <circleGeometry args={[0.45, 48]} />
+          <meshStandardMaterial
+            color="#0f0f1a"
+            roughness={0.3}
+            metalness={0.4}
+          />
+        </mesh>
+        <mesh position={[0, 0, DEPTH + 0.03]}>
+          <ringGeometry args={[0.4, 0.45, 48]} />
+          <meshStandardMaterial
+            color="#fbbf24"
+            emissive="#f59e0b"
+            emissiveIntensity={0.3}
+            roughness={0.2}
+            metalness={0.6}
+          />
         </mesh>
       </group>
 
       {/* Pointer (top) */}
-      <mesh position={[0, radius - 0.1, 0.5]} rotation={[0, 0, Math.PI]}>
-        <coneGeometry args={[0.3, 0.6, 3]} />
+      <mesh
+        position={[0, RADIUS + 0.05, DEPTH / 2 + 0.1]}
+        rotation={[0, 0, Math.PI]}
+      >
+        <coneGeometry args={[0.25, 0.55, 3]} />
         <meshStandardMaterial
-          color="#ff4444"
+          color="#ff3333"
           emissive="#ff2222"
-          emissiveIntensity={0.5}
+          emissiveIntensity={0.6}
+          roughness={0.2}
+          metalness={0.3}
         />
       </mesh>
 
-      {/* Outer ring */}
-      <mesh>
-        <ringGeometry args={[radius, radius + 0.15, 64]} />
-        <meshStandardMaterial color="#ffffff" opacity={0.15} transparent />
+      {/* Outer ring — golden */}
+      <mesh position={[0, 0, DEPTH / 2]}>
+        <ringGeometry args={[RADIUS, RADIUS + 0.1, 64]} />
+        <meshStandardMaterial
+          color="#fbbf24"
+          emissive="#f59e0b"
+          emissiveIntensity={0.15}
+          roughness={0.2}
+          metalness={0.5}
+          side={THREE.DoubleSide}
+        />
       </mesh>
     </group>
   );

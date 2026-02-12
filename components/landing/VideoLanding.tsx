@@ -5,11 +5,9 @@ import { useRouter } from 'next/navigation';
 import { BarLoader } from 'react-spinners';
 
 const VIDEOS = [
-  '/videos/grok-video-b6c96f58-786c-4981-abf4-fe6ef5a2b6d8.mp4',
   '/videos/grok-video-b6c96f58-786c-4981-abf4-fe6ef5a2b6d8(1).mp4',
   '/videos/grok-video-b6c96f58-786c-4981-abf4-fe6ef5a2b6d8(2).mp4',
   '/videos/grok-video-b6c96f58-786c-4981-abf4-fe6ef5a2b6d8(3).mp4',
-  '/videos/grok-video-b6c96f58-786c-4981-abf4-fe6ef5a2b6d8(4).mp4',
   '/videos/grok-video-b6c96f58-786c-4981-abf4-fe6ef5a2b6d8(5).mp4',
 ];
 

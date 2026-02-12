@@ -27,7 +27,8 @@ export default function GameCard({ game, onDelete }: GameCardProps) {
       </div>
       <p className="text-sm text-white/50 font-body leading-relaxed">{game.rules}</p>
       <div className="mt-3 flex items-center gap-2 text-xs text-white/30">
-        <span>{game.players} spillere</span>
+        <span>👥 {game.playersPerTeam === 0 ? 'Alle' : `${game.playersPerTeam} per lag`}</span>
+        <span>⭐ {game.points} poeng</span>
         {!game.visible && (
           <span className="bg-yellow-500/20 text-yellow-400 rounded-full px-2 py-0.5">
             Skjult

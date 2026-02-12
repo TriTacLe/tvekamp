@@ -2,34 +2,145 @@
   {
     "id": "1",
     "name": "Stein, Saks, Papir",
-    "rules": "Best av 3 runder. Spillerne viser tegn samtidig. Stein slår saks, saks slår papir, papir slår stein.",
+    "rules": "Klassikeren! Best av 3 runder — begge spillerne teller ned fra 3 og viser tegn samtidig. Stein knuser saks, saks klipper papir, papir pakker inn stein. Uavgjort = ny runde. Enkel, brutal, ingen unnskyldninger.",
     "time": 2,
-    "players": 2,
+    "playersPerTeam": 1,
+    "points": 1,
     "visible": true
   },
   {
     "id": "2",
     "name": "Armbryting",
-    "rules": "Klassisk armbryting! Albuen må holdes på bordet. Første som presser motstanderens hånd ned vinner.",
+    "rules": "Ren styrke! Begge spillerne plasserer albuen på bordet og griper hverandres hånd. På signal prøver begge å presse motstanderens hånd ned til bordet. Albuen må holdes i ro — løfter du albuen er det tap. Første som får motstanderens hånd ned vinner!",
     "time": 1,
-    "players": 2,
+    "playersPerTeam": 1,
+    "points": 1,
     "visible": true
   },
   {
     "id": "3",
     "name": "Trivia Quiz",
-    "rules": "5 spørsmål om teknologi. Raskeste riktige svar gir poeng. Mest poeng vinner!",
+    "rules": "Kunnskapsduell! 5 spørsmål innen tech, popkultur og allmennkunnskap vises på skjermen. Spillerne buzzer inn ved å rekke opp hånda — raskeste riktige svar gir 1 poeng. Feil svar gir motstanderen sjansen. Mest poeng etter 5 spørsmål vinner!",
     "time": 5,
-    "players": 2,
+    "playersPerTeam": 1,
+    "points": 1,
     "visible": true
   },
   {
-    "id": "15f34e83-1bcc-47e4-8bec-371e6a469d3f",
-    "name": "Test",
-    "rules": "test",
+    "id": "4",
+    "name": "Smash 2v2",
+    "rules": "Gaming-krig! To spillere fra hvert lag kjemper i en runde Super Smash Bros. Teamet velger karakterer fritt. Én runde, 3 liv hver, ingen items. Siste lag med liv igjen vinner! Taperene bærer skammen for hele teamet.",
     "time": 5,
-    "players": 2,
-    "visible": true,
-    "createdAt": "2026-01-27T18:35:51.053Z"
+    "playersPerTeam": 2,
+    "points": 2,
+    "visible": true
+  },
+  {
+    "id": "5",
+    "name": "Første man til micen",
+    "rules": "Alle mot alle! Et teknisk begrep vises på skjermen — første person som løper til mikrofonen og forklarer begrepet korrekt vinner runden for sitt lag. 5 runder totalt. Feil forklaring = runden går til motstanderlaget. Laget med flest runder vinner!",
+    "time": 5,
+    "playersPerTeam": 0,
+    "points": 3,
+    "visible": true
+  },
+  {
+    "id": "6",
+    "name": "Mimeleik",
+    "rules": "Skuespiller-tid! 3 spillere fra hvert lag stiller opp. Én spiller får et ord/uttrykk og skal mime det for lagkameratene — ingen lyder eller peking på gjenstander! Lagkameratene har 60 sekunder på å gjette. Lagene bytter på, 3 runder hver. Flest riktige gjettinger vinner!",
+    "time": 5,
+    "playersPerTeam": 3,
+    "points": 3,
+    "visible": true
+  },
+  {
+    "id": "7",
+    "name": "Gjett gjenstander",
+    "rules": "Gjette-fest! En gjenstand er gjemt i en pose eller bak et teppe. Lagene får etter tur stille ja/nei-spørsmål for å finne ut hva det er. Hvert lag får 3 spørsmål per runde før de kan gjette. Feil gjett = laget er ute av runden. 5 gjenstander totalt — flest riktige vinner!",
+    "time": 5,
+    "playersPerTeam": 0,
+    "points": 3,
+    "visible": true
+  },
+  {
+    "id": "8",
+    "name": "Pictionary",
+    "rules": "Tegnekonkurranse! Én spiller fra hvert lag får et hemmelig ord og skal tegne det på tavla — ingen bokstaver, tall eller snakking! Lagkameraten(e) skal gjette hva det er. 60 sekunder per runde, 3 runder. Raskest riktig gjett vinner runden. Flest runder vinner!",
+    "time": 4,
+    "playersPerTeam": 2,
+    "points": 2,
+    "visible": true
+  },
+  {
+    "id": "9",
+    "name": "Speed Debugging",
+    "rules": "Bug-jakt! En kode-snutt med en skjult feil vises på skjermen. Begge spillerne har penn og papir. Første som finner feilen, skriver ned riktig løsning og leverer den inn vinner! 3 runder med ulike bugs. Raskest finger vinner.",
+    "time": 3,
+    "playersPerTeam": 1,
+    "points": 1,
+    "visible": true
+  },
+  {
+    "id": "10",
+    "name": "Blitz Typeracer",
+    "rules": "Tastatur-duell! Begge spillerne får identisk tekst på skjermen og skal skrive den av så raskt og nøyaktig som mulig. Feil teller mot deg — hvert feil tegn gir 1 sekund straff. Raskeste totaltid (inkludert straff) vinner! Best av 3 runder.",
+    "time": 2,
+    "playersPerTeam": 1,
+    "points": 1,
+    "visible": true
+  },
+  {
+    "id": "11",
+    "name": "Papirfly",
+    "rules": "Ingeniørkunst! Hvert lag får 2 minutter til å brette papirfly. Deretter kaster alle spillerne fra samme linje — lengste kast for hvert lag teller. Flyet må være laget av ett A4-ark, ingen tape eller ekstra materialer. Laget med det lengste kastet vinner!",
+    "time": 3,
+    "playersPerTeam": 2,
+    "points": 2,
+    "visible": true
+  },
+  {
+    "id": "12",
+    "name": "Stirrekonkurranse",
+    "rules": "Psykologisk krigføring! Spillerne sitter rett overfor hverandre og stirrer inn i motstanderens øyne. Ingen snakking, men grimaser er lov. Første som ler, blunker, eller ser bort taper! Best av 3 runder. Publikum oppfordres til å prøve å distrahere.",
+    "time": 2,
+    "playersPerTeam": 1,
+    "points": 1,
+    "visible": true
+  },
+  {
+    "id": "13",
+    "name": "Emoji-gjetting",
+    "rules": "Dekod emojiene! En serie emojis vises på skjermen som representerer en film, sang, eller kjent uttrykk. Lagene buzzer inn — første lag som gjetter riktig vinner runden. 5 runder totalt. Feil gjett betyr at motstanderlaget får prøve. Flest riktige vinner!",
+    "time": 5,
+    "playersPerTeam": 0,
+    "points": 3,
+    "visible": true
+  },
+  {
+    "id": "14",
+    "name": "Musikkquiz",
+    "rules": "Name that tune! 5 sekunder av en sang spilles av — lagene buzzer inn med artist og tittel. Du trenger begge deler for fullt poeng! Bare artist eller bare tittel gir halvt poeng. 8 sanger totalt, miks av norsk og internasjonalt. Laget med høyest poengsum vinner!",
+    "time": 5,
+    "playersPerTeam": 0,
+    "points": 3,
+    "visible": true
+  },
+  {
+    "id": "15",
+    "name": "Nynne med vann",
+    "rules": "Vannmusikk! Spilleren fyller munnen med vann og skal nynne en kjent sang — motstanderen må gjette hvilken sang det er. Hvert lag får 3 sanger å nynne. Spytter du ut vannet av latter taper du runden automatisk! Flest riktige gjettinger vinner.",
+    "time": 3,
+    "playersPerTeam": 1,
+    "points": 2,
+    "visible": true
+  },
+  {
+    "id": "16",
+    "name": "Lefse-smack",
+    "rules": "Spillerne slår hverandre med lefse i ansiktet uten å flire - begge har vann i munnen imens",
+    "time": 3,
+    "playersPerTeam": 1,
+    "points": 2,
+    "visible": true
   }
 ]

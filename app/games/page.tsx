@@ -12,18 +12,20 @@ export default function GamesPage() {
   const [name, setName] = useState('');
   const [rules, setRules] = useState('');
   const [time, setTime] = useState(5);
-  const [players, setPlayers] = useState(2);
+  const [playersPerTeam, setPlayersPerTeam] = useState(1);
+  const [points, setPoints] = useState(1);
   const [submitting, setSubmitting] = useState(false);
 
   const handleAdd = async () => {
     if (!name.trim() || !rules.trim()) return;
     setSubmitting(true);
     try {
-      await addGame({ name: name.trim(), rules: rules.trim(), time, players });
+      await addGame({ name: name.trim(), rules: rules.trim(), time, playersPerTeam, points });
       setName('');
       setRules('');
       setTime(5);
-      setPlayers(2);
+      setPlayersPerTeam(1);
+      setPoints(1);
       setShowAdd(false);
     } catch (err) {
       console.error(err);
@@ -81,7 +83,7 @@ export default function GamesPage() {
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white font-body focus:outline-none focus:border-purple-500 resize-none"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm text-white/50 mb-1 font-body">Tid (min)</label>
               <input
@@ -93,11 +95,21 @@ export default function GamesPage() {
               />
             </div>
             <div>
-              <label className="block text-sm text-white/50 mb-1 font-body">Spillere</label>
+              <label className="block text-sm text-white/50 mb-1 font-body">Per lag (0=alle)</label>
               <input
                 type="number"
-                value={players}
-                onChange={(e) => setPlayers(Number(e.target.value))}
+                value={playersPerTeam}
+                onChange={(e) => setPlayersPerTeam(Number(e.target.value))}
+                min={0}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white font-body focus:outline-none focus:border-purple-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/50 mb-1 font-body">Poeng</label>
+              <input
+                type="number"
+                value={points}
+                onChange={(e) => setPoints(Number(e.target.value))}
                 min={1}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white font-body focus:outline-none focus:border-purple-500"
               />

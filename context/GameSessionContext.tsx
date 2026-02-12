@@ -8,25 +8,28 @@ interface GameSessionState {
   playedGameIds: Set<string>;
   usedPlayerNames: Set<string>;
   currentGame: Game | null;
-  selectedWebPlayer: string;
-  selectedDevopsPlayer: string;
+  selectedWebPlayers: string[];
+  selectedDevopsPlayers: string[];
   showConfetti: boolean;
   animationEnabled: boolean;
   lastWinner: 'web' | 'devops' | null;
+  webScore: number;
+  devopsScore: number;
 }
 
 interface GameSessionContextType extends GameSessionState {
   setPhase: (phase: GameFlowPhase) => void;
   setCurrentGame: (game: Game | null) => void;
-  setSelectedWebPlayer: (name: string) => void;
-  setSelectedDevopsPlayer: (name: string) => void;
+  setSelectedWebPlayers: (names: string[]) => void;
+  setSelectedDevopsPlayers: (names: string[]) => void;
   setLastWinner: (winner: 'web' | 'devops' | null) => void;
   markGamePlayed: (gameId: string) => void;
   unmarkGamePlayed: (gameId: string) => void;
   resetAllGames: () => void;
-  markPlayersUsed: (webPlayer: string, devopsPlayer: string) => void;
+  markPlayersUsed: (players: string[]) => void;
   unmarkPlayerUsed: (name: string) => void;
   resetAllPlayers: () => void;
+  addScore: (team: 'web' | 'devops', points: number) => void;
   triggerConfetti: () => void;
   toggleAnimation: () => void;
   reset: () => void;
@@ -39,11 +42,13 @@ export function GameSessionProvider({ children }: { children: ReactNode }) {
   const [playedGameIds, setPlayedGameIds] = useState<Set<string>>(new Set());
   const [usedPlayerNames, setUsedPlayerNames] = useState<Set<string>>(new Set());
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
-  const [selectedWebPlayer, setSelectedWebPlayer] = useState('');
-  const [selectedDevopsPlayer, setSelectedDevopsPlayer] = useState('');
+  const [selectedWebPlayers, setSelectedWebPlayers] = useState<string[]>([]);
+  const [selectedDevopsPlayers, setSelectedDevopsPlayers] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [animationEnabled, setAnimationEnabled] = useState(true);
   const [lastWinner, setLastWinner] = useState<'web' | 'devops' | null>(null);
+  const [webScore, setWebScore] = useState(0);
+  const [devopsScore, setDevopsScore] = useState(0);
 
   const markGamePlayed = useCallback((gameId: string) => {
     setPlayedGameIds((prev) => new Set(prev).add(gameId));
@@ -61,11 +66,10 @@ export function GameSessionProvider({ children }: { children: ReactNode }) {
     setPlayedGameIds(new Set());
   }, []);
 
-  const markPlayersUsed = useCallback((webPlayer: string, devopsPlayer: string) => {
+  const markPlayersUsed = useCallback((players: string[]) => {
     setUsedPlayerNames((prev) => {
       const next = new Set(prev);
-      next.add(webPlayer);
-      next.add(devopsPlayer);
+      players.forEach((p) => next.add(p));
       return next;
     });
   }, []);
@@ -82,6 +86,14 @@ export function GameSessionProvider({ children }: { children: ReactNode }) {
     setUsedPlayerNames(new Set());
   }, []);
 
+  const addScore = useCallback((team: 'web' | 'devops', points: number) => {
+    if (team === 'web') {
+      setWebScore((prev) => prev + points);
+    } else {
+      setDevopsScore((prev) => prev + points);
+    }
+  }, []);
+
   const triggerConfetti = useCallback(() => {
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 3000);
@@ -94,8 +106,8 @@ export function GameSessionProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(() => {
     setPhase('idle');
     setCurrentGame(null);
-    setSelectedWebPlayer('');
-    setSelectedDevopsPlayer('');
+    setSelectedWebPlayers([]);
+    setSelectedDevopsPlayers([]);
     setLastWinner(null);
   }, []);
 
@@ -106,15 +118,17 @@ export function GameSessionProvider({ children }: { children: ReactNode }) {
         playedGameIds,
         usedPlayerNames,
         currentGame,
-        selectedWebPlayer,
-        selectedDevopsPlayer,
+        selectedWebPlayers,
+        selectedDevopsPlayers,
         showConfetti,
         animationEnabled,
         lastWinner,
+        webScore,
+        devopsScore,
         setPhase,
         setCurrentGame,
-        setSelectedWebPlayer,
-        setSelectedDevopsPlayer,
+        setSelectedWebPlayers,
+        setSelectedDevopsPlayers,
         setLastWinner,
         markGamePlayed,
         unmarkGamePlayed,
@@ -122,6 +136,7 @@ export function GameSessionProvider({ children }: { children: ReactNode }) {
         markPlayersUsed,
         unmarkPlayerUsed,
         resetAllPlayers,
+        addScore,
         triggerConfetti,
         toggleAnimation,
         reset,
