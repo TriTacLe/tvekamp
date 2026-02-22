@@ -28,7 +28,7 @@ export default function ResultModal({
       <div className="relative glass rounded-2xl p-6 max-w-md w-full text-center">
         <h2 className="font-display text-2xl mb-2">Hvem vant?</h2>
         <p className="text-white/50 mb-1 font-body">{gameName}</p>
-        <p className="text-yellow-400/70 mb-6 font-body text-sm">+{points} poeng</p>
+        <p className="text-yellow-400/70 mb-6 font-body text-sm">✦ +{points} aura poeng</p>
 
         <div className="flex gap-4">
           <button

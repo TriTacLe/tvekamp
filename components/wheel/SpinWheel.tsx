@@ -161,7 +161,7 @@ export default function SpinWheel() {
             <span className="text-web-primary font-display text-lg">Web</span>
             <span className="text-white font-display text-2xl">{webScore}</span>
           </div>
-          <span className="text-white/30 font-display text-sm">POENG</span>
+          <span className="text-yellow-400/50 font-display text-sm">✦ AURA POENG</span>
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-devops-primary/20">
             <span className="text-devops-primary font-display text-lg">DevOps</span>
             <span className="text-white font-display text-2xl">{devopsScore}</span>

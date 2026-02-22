@@ -6,9 +6,10 @@ interface TeamStatsProps {
   team: 'web' | 'devops';
   count: number;
   wins: number;
+  auraPoints: number;
 }
 
-export default function TeamStats({ team, count, wins }: TeamStatsProps) {
+export default function TeamStats({ team, count, wins, auraPoints }: TeamStatsProps) {
   const config = TEAM_CONFIG[team];
 
   return (
@@ -17,6 +18,11 @@ export default function TeamStats({ team, count, wins }: TeamStatsProps) {
       <span className="font-display text-xl">{config.name}</span>
       <span className="text-white/40 text-sm">
         {count} deltakere &middot; {wins} seiere
+      </span>
+      <span className="ml-auto flex items-center gap-1 text-yellow-400/80 text-sm font-body">
+        <span>✦</span>
+        <span className="font-semibold">{auraPoints}</span>
+        <span className="text-white/40 text-xs">aura</span>
       </span>
     </div>
   );
