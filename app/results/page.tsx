@@ -6,7 +6,7 @@ import Scoreboard from '@/components/results/Scoreboard';
 import MatchHistory from '@/components/results/MatchHistory';
 
 export default function ResultsPage() {
-  const { results, webWins, devopsWins, loading, clearResults } = useResults();
+  const { results, webWins, devopsWins, webScore, devopsScore, loading, clearResults } = useResults();
   const [confirming, setConfirming] = useState(false);
 
   const handleClear = async () => {
@@ -48,7 +48,7 @@ export default function ResultsPage() {
           </button>
         )}
       </div>
-      <Scoreboard webWins={webWins} devopsWins={devopsWins} />
+      <Scoreboard webWins={webWins} devopsWins={devopsWins} webAuraPoints={webScore} devopsAuraPoints={devopsScore} />
       <MatchHistory results={results} />
     </div>
   );
