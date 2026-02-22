@@ -24,7 +24,7 @@ export default function ResultItem({ result }: { result: GameResult }) {
         <span>{result.webPlayers}</span>
         <span>vs</span>
         <span>{result.devopsPlayers}</span>
-        {result.points && <span className="text-yellow-400/60">+{result.points}p</span>}
+        {result.points && <span className="text-yellow-400/60">✦ +{result.points} aura</span>}
         <span className="ml-auto">
           {new Date(result.timestamp).toLocaleDateString('no-NO')}
         </span>

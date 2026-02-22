@@ -11,6 +11,7 @@ export default function ParticipantCard({ participant, onDelete }: ParticipantCa
   const isWeb = participant.team === 'web';
   const borderColor = isWeb ? 'border-web-primary/30' : 'border-devops-primary/30';
   const glowColor = isWeb ? 'hover:shadow-web-primary/20' : 'hover:shadow-devops-primary/20';
+  const auraPoints = participant.auraPoints || 0;
 
   return (
     <div
@@ -46,6 +47,18 @@ export default function ParticipantCard({ participant, onDelete }: ParticipantCa
           {participant.superpower && (
             <p className="text-sm text-white/40 mt-0.5">{participant.superpower}</p>
           )}
+        </div>
+        {/* Aura points badge */}
+        <div
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-body ${
+            isWeb
+              ? 'bg-web-primary/15 text-web-primary'
+              : 'bg-devops-primary/15 text-devops-primary'
+          }`}
+        >
+          <span className="text-yellow-400">✦</span>
+          <span className="font-semibold">{auraPoints}</span>
+          <span className="text-white/50 text-xs">aura poeng</span>
         </div>
       </div>
       {participant.funFact && (

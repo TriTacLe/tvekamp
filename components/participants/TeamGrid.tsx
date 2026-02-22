@@ -13,11 +13,14 @@ interface TeamGridProps {
 }
 
 export default function TeamGrid({ webPlayers, devopsPlayers, webWins, devopsWins, onDelete }: TeamGridProps) {
+  const webAura = webPlayers.reduce((sum, p) => sum + (p.auraPoints || 0), 0);
+  const devopsAura = devopsPlayers.reduce((sum, p) => sum + (p.auraPoints || 0), 0);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
       {/* Web Team */}
       <div>
-        <TeamStats team="web" count={webPlayers.length} wins={webWins} />
+        <TeamStats team="web" count={webPlayers.length} wins={webWins} auraPoints={webAura} />
         <div className="space-y-3">
           {webPlayers.map((p) => (
             <ParticipantCard key={p.id} participant={p} onDelete={onDelete} />
@@ -30,7 +33,7 @@ export default function TeamGrid({ webPlayers, devopsPlayers, webWins, devopsWin
 
       {/* DevOps Team */}
       <div>
-        <TeamStats team="devops" count={devopsPlayers.length} wins={devopsWins} />
+        <TeamStats team="devops" count={devopsPlayers.length} wins={devopsWins} auraPoints={devopsAura} />
         <div className="space-y-3">
           {devopsPlayers.map((p) => (
             <ParticipantCard key={p.id} participant={p} onDelete={onDelete} />
