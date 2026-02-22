@@ -5,6 +5,7 @@ export interface Participant {
   funFact?: string;
   superpower?: string;
   imageUrl?: string;
+  auraPoints?: number;
   createdAt?: string;
 }
 

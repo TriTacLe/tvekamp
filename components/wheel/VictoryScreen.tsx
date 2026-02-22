@@ -68,7 +68,7 @@ export default function VictoryScreen({ winnerTeam, winnerNames, points, onDismi
         <p className={`font-body text-xl mt-1 bg-gradient-to-r ${teamGradient} bg-clip-text text-transparent`}>
           {teamLabel}
         </p>
-        <p className="font-body text-lg mt-2 text-yellow-400">+{points} poeng</p>
+        <p className="font-body text-lg mt-2 text-yellow-400">✦ +{points} aura poeng</p>
       </div>
 
       {/* Dismiss button */}
